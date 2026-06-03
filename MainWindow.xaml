@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="DNSManagerGUI.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DNSManagerGUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="DNS Manager Pro">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <Grid x:Name="RootGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ===== Sidebar ===== -->
+        <Grid Grid.Column="0" Background="#181825">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Logo -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,24,20,20">
+                <FontIcon Glyph="&#xE774;" FontSize="28" Foreground="#89B4FA" Margin="0,0,12,0"/>
+                <StackPanel>
+                    <TextBlock Text="DNS Manager" FontSize="18" FontWeight="Bold" Foreground="#89B4FA"/>
+                    <TextBlock Text="Pro Edition" FontSize="11" Foreground="#6C7086"/>
+                </StackPanel>
+            </StackPanel>
+
+            <Rectangle Grid.Row="0" VerticalAlignment="Bottom" Height="1" Fill="#313244" Margin="16,0"/>
+
+            <!-- Navigation -->
+            <StackPanel Grid.Row="1" Margin="8,12">
+                <RadioButton x:Name="NavDashboard" GroupName="Nav" IsChecked="True"
+                             Checked="Nav_Checked" Tag="Dashboard"
+                             Style="{StaticResource NavigationViewRadioButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE80F;" FontSize="16" Margin="0,0,12,0"/>
+                        <TextBlock Text="Dashboard" FontSize="14"/>
+                    </StackPanel>
+                </RadioButton>
+                <RadioButton x:Name="NavSetDns" GroupName="Nav"
+                             Checked="Nav_Checked" Tag="SetDns"
+                             Style="{StaticResource NavigationViewRadioButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE774;" FontSize="16" Margin="0,0,12,0"/>
+                        <TextBlock Text="Set DNS" FontSize="14"/>
+                    </StackPanel>
+                </RadioButton>
+                <RadioButton x:Name="NavProfiles" GroupName="Nav"
+                             Checked="Nav_Checked" Tag="Profiles"
+                             Style="{StaticResource NavigationViewRadioButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE8F1;" FontSize="16" Margin="0,0,12,0"/>
+                        <TextBlock Text="Profiles" FontSize="14"/>
+                    </StackPanel>
+                </RadioButton>
+                <RadioButton x:Name="NavBenchmark" GroupName="Nav"
+                             Checked="Nav_Checked" Tag="Benchmark"
+                             Style="{StaticResource NavigationViewRadioButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE9D9;" FontSize="16" Margin="0,0,12,0"/>
+                        <TextBlock Text="Benchmark" FontSize="14"/>
+                    </StackPanel>
+                </RadioButton>
+                <RadioButton x:Name="NavResolver" GroupName="Nav"
+                             Checked="Nav_Checked" Tag="Resolver"
+                             Style="{StaticResource NavigationViewRadioButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE774;" FontSize="16" Margin="0,0,12,0"/>
+                        <TextBlock Text="Resolver" FontSize="14"/>
+                    </StackPanel>
+                </RadioButton>
+                <RadioButton x:Name="NavImportExport" GroupName="Nav"
+                             Checked="Nav_Checked" Tag="ImportExport"
+                             Style="{StaticResource NavigationViewRadioButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE898;" FontSize="16" Margin="0,0,12,0"/>
+                        <TextBlock Text="Import / Export" FontSize="14"/>
+                    </StackPanel>
+                </RadioButton>
+
+                <Rectangle Height="1" Fill="#313244" Margin="4,12"/>
+
+                <RadioButton x:Name="NavAbout" GroupName="Nav"
+                             Checked="Nav_Checked" Tag="About"
+                             Style="{StaticResource NavigationViewRadioButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE946;" FontSize="16" Margin="0,0,12,0" Foreground="#F9E2AF"/>
+                        <TextBlock Text="About" FontSize="14"/>
+                    </StackPanel>
+                </RadioButton>
+            </StackPanel>
+
+            <!-- Admin Status -->
+            <StackPanel Grid.Row="2" Margin="16,8,16,20">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <Ellipse x:Name="AdminIndicator" Width="10" Height="10" Fill="#F38BA8" Margin="0,0,8,0"
+                             VerticalAlignment="Center"/>
+                    <TextBlock x:Name="AdminStatusText" Text="Not Admin" FontSize="12" Foreground="#6C7086"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+                <Button x:Name="BtnRestartAsAdmin" Content="Restart as Admin"
+                        Click="RestartAsAdmin_Click" FontSize="12"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        Visibility="Visible" CornerRadius="6" Padding="8,6"
+                        Background="#45475A" Foreground="#CDD6F4"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- ===== Main Content ===== -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <ScrollViewer Grid.Row="0" Padding="24,20">
+                <Grid>
+
+                <!-- ===== Dashboard Page ===== -->
+                <StackPanel x:Name="PageDashboard" Visibility="Visible">
+                    <TextBlock Text="Dashboard" FontSize="24" FontWeight="SemiBold" Foreground="#89B4FA" Margin="0,0,0,20"/>
+
+                    <!-- Current Adapter Card -->
+                    <Border Background="#313244" CornerRadius="12" Padding="24" Margin="0,0,0,16">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <FontIcon Glyph="&#xE968;" FontSize="22" Foreground="#89B4FA" Margin="0,0,10,0"/>
+                                <TextBlock Text="Current Network Adapter" FontSize="16" FontWeight="SemiBold"
+                                           Foreground="#CDD6F4" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <TextBlock Text="Name: " Foreground="#A6ADC8" FontSize="13" FontWeight="SemiBold"/>
+                                <TextBlock x:Name="CurrentAdapterName" Text="—" Foreground="#CDD6F4" FontSize="14"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <TextBlock Text="Type: " Foreground="#A6ADC8" FontSize="13" FontWeight="SemiBold"/>
+                                <TextBlock x:Name="CurrentAdapterType" Text="—" Foreground="#CDD6F4" FontSize="14"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <TextBlock Text="Status: " Foreground="#A6ADC8" FontSize="13" FontWeight="SemiBold"/>
+                                <TextBlock x:Name="CurrentAdapterStatus" Text="—" Foreground="#CDD6F4" FontSize="14"/>
+                            </StackPanel>
+
+                            <Rectangle Height="1" Fill="#45475A" Margin="0,8,0,12"/>
+
+                            <TextBlock Text="Current DNS Servers" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="#A6ADC8" Margin="0,0,0,8"/>
+                            <ItemsControl x:Name="CurrentDnsList">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Margin="0,3">
+                                            <TextBlock Text="  •  " Foreground="#89B4FA" FontSize="14"/>
+                                            <TextBlock Text="{Binding}" Foreground="#CDD6F4" FontSize="14"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,16,0,0" Spacing="12">
+                                <Button x:Name="BtnTestSpeed" Content="Test DNS Speed" Click="TestCurrentDnsSpeed_Click"
+                                        Style="{StaticResource AccentButtonStyle}"/>
+                                <Button x:Name="BtnClearDns" Content="Clear (DHCP)" Click="ClearDns_Click">
+                                    <Button.Resources>
+                                        <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="#F38BA8"/>
+                                    </Button.Resources>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- DNS Speed Results -->
+                    <Border x:Name="DnsSpeedCard" Background="#313244" CornerRadius="12" Padding="24" Margin="0,0,0,16" Visibility="Collapsed">
+                        <StackPanel>
+                            <TextBlock Text="DNS Speed Test Results" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="#CDD6F4" Margin="0,0,0,12"/>
+                            <ItemsControl x:Name="DnsSpeedResults">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Margin="0,3">
+                                            <TextBlock Text="  •  " Foreground="#F9E2AF" FontSize="14"/>
+                                            <TextBlock Text="{Binding}" Foreground="#CDD6F4" FontSize="14"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ===== Set DNS Page ===== -->
+                <StackPanel x:Name="PageSetDns" Visibility="Collapsed">
+                    <TextBlock Text="Set DNS" FontSize="24" FontWeight="SemiBold" Foreground="#89B4FA" Margin="0,0,0,20"/>
+
+                    <Border Background="#313244" CornerRadius="12" Padding="24" Margin="0,0,0,16">
+                        <StackPanel>
+                            <!-- Adapter -->
+                            <TextBlock Text="Network Adapter" Foreground="#A6ADC8" FontSize="13" Margin="0,0,0,6"/>
+                            <ComboBox x:Name="SetDnsAdapterCombo" HorizontalAlignment="Stretch"
+                                      Margin="0,0,0,16" MinHeight="36"/>
+
+                            <!-- Primary DNS -->
+                            <TextBlock Text="Primary DNS" Foreground="#A6ADC8" FontSize="13" Margin="0,0,0,6"/>
+                            <TextBox x:Name="PrimaryDnsInput" PlaceholderText="e.g. 1.1.1.1"
+                                     Margin="0,0,0,16"/>
+
+                            <!-- Secondary DNS -->
+                            <TextBlock Text="Secondary DNS (Optional)" Foreground="#A6ADC8" FontSize="13" Margin="0,0,0,6"/>
+                            <TextBox x:Name="SecondaryDnsInput" PlaceholderText="e.g. 8.8.8.8"
+                                     Margin="0,0,0,16"/>
+
+                            <!-- Profile Name -->
+                            <TextBlock Text="Profile Name (Optional)" Foreground="#A6ADC8" FontSize="13" Margin="0,0,0,6"/>
+                            <TextBox x:Name="ProfileNameInput" PlaceholderText="e.g. Cloudflare"
+                                     Margin="0,0,0,16"/>
+
+                            <!-- No Save -->
+                            <CheckBox x:Name="NoSaveCheck" Content="Don't save as profile"
+                                      Foreground="#A6ADC8" Margin="0,0,0,20" IsChecked="False"/>
+
+                            <!-- Quick Select -->
+                            <TextBlock Text="Quick Select" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="#A6ADC8" Margin="0,0,0,10"/>
+                            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,20">
+                                <Button Content="Cloudflare" Click="QuickSelectCloudflare"/>
+                                <Button Content="Google" Click="QuickSelectGoogle"/>
+                                <Button Content="OpenDNS" Click="QuickSelectOpenDns"/>
+                                <Button Content="Quad9" Click="QuickSelectQuad9"/>
+                                <Button Content="AdGuard" Click="QuickSelectAdGuard"/>
+                                <Button Content="CleanBrowsing" Click="QuickSelectCleanBrowsing"/>
+                            </StackPanel>
+
+                            <!-- Actions -->
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Button Content="Apply DNS" Click="SetDns_Click"
+                                        Style="{StaticResource AccentButtonStyle}"/>
+                                <Button Content="Clear (DHCP)" Click="ClearDnsFromSetPage_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Test Result -->
+                    <Border x:Name="SetDnsTestResult" Background="#313244" CornerRadius="12" Padding="24" Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon x:Name="SetDnsTestIcon" Glyph="&#xE73E;" FontSize="22" Foreground="#A6E3A1" Margin="0,0,10,0"/>
+                            <TextBlock x:Name="SetDnsTestText" FontSize="14" Foreground="#CDD6F4"
+                                       VerticalAlignment="Center" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ===== Profiles Page ===== -->
+                <StackPanel x:Name="PageProfiles" Visibility="Collapsed">
+                    <TextBlock Text="Profiles" FontSize="24" FontWeight="SemiBold" Foreground="#89B4FA" Margin="0,0,0,20"/>
+
+                    <Border Background="#313244" CornerRadius="12" Padding="24" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="Saved DNS Profiles" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="#A6ADC8" Margin="0,0,0,12"/>
+
+                            <ListView x:Name="ProfilesListView" MaxHeight="350" SelectionMode="Single">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Padding="4,8" ColumnSpacing="16">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="50"/>
+                                                <ColumnDefinition Width="180"/>
+                                                <ColumnDefinition Width="140"/>
+                                                <ColumnDefinition Width="140"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="{Binding Id}" Foreground="#89B4FA"
+                                                       FontSize="13" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="#CDD6F4"
+                                                       FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding PrimaryDns}" Foreground="#CDD6F4"
+                                                       FontSize="13" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="3" Text="{Binding SecondaryDnsDisplay}" Foreground="#A6ADC8"
+                                                       FontSize="13" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="4" Text="{Binding LastUsedDisplay}" Foreground="#6C7086"
+                                                       FontSize="12" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                                <ListView.Header>
+                                    <Grid Padding="4,4" ColumnSpacing="16" Background="#45475A" CornerRadius="4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="180"/>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="ID" Foreground="#A6ADC8" FontSize="12" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Column="1" Text="Name" Foreground="#A6ADC8" FontSize="12" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Column="2" Text="Primary" Foreground="#A6ADC8" FontSize="12" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Column="3" Text="Secondary" Foreground="#A6ADC8" FontSize="12" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Column="4" Text="Last Used" Foreground="#A6ADC8" FontSize="12" FontWeight="SemiBold"/>
+                                    </Grid>
+                                </ListView.Header>
+                            </ListView>
+
+                            <TextBlock x:Name="ProfilesRegistryPath" Text="" Foreground="#6C7086"
+                                       FontSize="11" Margin="0,8,0,0"/>
+
+                            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,16,0,0">
+                                <Button Content="Apply Profile" Click="ApplyProfile_Click"
+                                        Style="{StaticResource AccentButtonStyle}"/>
+                                <Button Content="Rename" Click="RenameProfile_Click"/>
+                                <Button Content="Delete" Click="DeleteProfile_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ===== Benchmark Page ===== -->
+                <StackPanel x:Name="PageBenchmark" Visibility="Collapsed">
+                    <TextBlock Text="DNS Speed Benchmark" FontSize="24" FontWeight="SemiBold" Foreground="#89B4FA" Margin="0,0,0,20"/>
+
+                    <Border Background="#313244" CornerRadius="12" Padding="24" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="Compare popular DNS servers speed" FontSize="14"
+                                       Foreground="#A6ADC8" Margin="0,0,0,16" TextWrapping="Wrap"/>
+                            <Button x:Name="RunBenchmarkBtn" Content="Run Benchmark" Click="RunBenchmark_Click"
+                                    Style="{StaticResource AccentButtonStyle}" Margin="0,0,0,20"/>
+
+                            <ItemsControl x:Name="BenchmarkResults">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#45475A" CornerRadius="8" Padding="16,12" Margin="0,0,0,8">
+                                            <Grid ColumnSpacing="16">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="140"/>
+                                                    <ColumnDefinition Width="180"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding Name}" Foreground="#CDD6F4"
+                                                           FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Ip}" Foreground="#A6ADC8"
+                                                           FontSize="13" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding LatencyDisplay}"
+                                                           Foreground="{Binding LatencyColor}" FontSize="14"
+                                                           FontWeight="Bold" VerticalAlignment="Center"
+                                                           HorizontalAlignment="Right"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ===== Resolver Page ===== -->
+                <StackPanel x:Name="PageResolver" Visibility="Collapsed">
+                    <TextBlock Text="DNS Resolver" FontSize="24" FontWeight="SemiBold" Foreground="#89B4FA" Margin="0,0,0,20"/>
+
+                    <Border Background="#313244" CornerRadius="12" Padding="24" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="Domain" Foreground="#A6ADC8" FontSize="13" Margin="0,0,0,6"/>
+                            <TextBox x:Name="ResolveDomainInput" PlaceholderText="e.g. github.com"
+                                     Margin="0,0,0,16"/>
+
+                            <TextBlock Text="DNS Server (Optional)" Foreground="#A6ADC8" FontSize="13" Margin="0,0,0,6"/>
+                            <TextBox x:Name="ResolveDnsServerInput" PlaceholderText="e.g. 1.1.1.1"
+                                     Margin="0,0,0,16"/>
+
+                            <Button Content="Resolve" Click="Resolve_Click"
+                                    Style="{StaticResource AccentButtonStyle}" Margin="0,0,0,20"/>
+
+                            <TextBlock Text="Results" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="#A6ADC8" Margin="0,0,0,8"/>
+                            <ItemsControl x:Name="ResolveResults">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Margin="0,3">
+                                            <TextBlock Text="  •  " Foreground="#A6E3A1" FontSize="14"/>
+                                            <TextBlock Text="{Binding}" Foreground="#CDD6F4" FontSize="14"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ===== Import / Export Page ===== -->
+                <StackPanel x:Name="PageImportExport" Visibility="Collapsed">
+                    <TextBlock Text="Import / Export Profiles" FontSize="24" FontWeight="SemiBold" Foreground="#89B4FA" Margin="0,0,0,20"/>
+
+                    <!-- Export -->
+                    <Border Background="#313244" CornerRadius="12" Padding="24" Margin="0,0,0,16">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <FontIcon Glyph="&#xE898;" FontSize="20" Foreground="#89B4FA" Margin="0,0,10,0"/>
+                                <TextBlock Text="Export" FontSize="16" FontWeight="SemiBold"
+                                           Foreground="#CDD6F4" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <TextBlock Text="File Path" Foreground="#A6ADC8" FontSize="13" Margin="0,0,0,6"/>
+                            <Grid Margin="0,0,0,16" ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="ExportPathInput" Grid.Column="0" Text="dns-profiles.json"/>
+                                <Button x:Name="BtnExportBrowse" Grid.Column="1" Content="..." Click="ExportBrowse_Click"/>
+                            </Grid>
+
+                            <CheckBox x:Name="ExportSpecificIdCheck" Content="Export specific profile by ID"
+                                      Foreground="#A6ADC8" Margin="0,0,0,8"
+                                      Checked="ExportSpecificId_Changed" Unchecked="ExportSpecificId_Changed"/>
+
+                            <StackPanel x:Name="ExportIdPanel" Orientation="Horizontal" Margin="0,0,0,16" Visibility="Collapsed" Spacing="8">
+                                <TextBlock Text="Profile ID:" Foreground="#A6ADC8" FontSize="13" VerticalAlignment="Center"/>
+                                <TextBox x:Name="ExportIdInput" Width="100"/>
+                            </StackPanel>
+
+                            <Button Content="Export" Click="Export_Click" Style="{StaticResource AccentButtonStyle}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Import -->
+                    <Border Background="#313244" CornerRadius="12" Padding="24" Margin="0,0,0,16">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <FontIcon Glyph="&#xE896;" FontSize="20" Foreground="#89B4FA" Margin="0,0,10,0"/>
+                                <TextBlock Text="Import" FontSize="16" FontWeight="SemiBold"
+                                           Foreground="#CDD6F4" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <TextBlock Text="File Path" Foreground="#A6ADC8" FontSize="13" Margin="0,0,0,6"/>
+                            <Grid Margin="0,0,0,16" ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="ImportPathInput" Grid.Column="0" Text="dns-profiles.json"/>
+                                <Button x:Name="BtnImportBrowse" Grid.Column="1" Content="..." Click="ImportBrowse_Click"/>
+                            </Grid>
+
+                            <CheckBox x:Name="ImportMergeCheck" Content="Merge mode — keep existing profiles"
+                                      Foreground="#A6ADC8" Margin="0,0,0,16" IsChecked="True"/>
+
+                            <Button Content="Import" Click="Import_Click" Style="{StaticResource AccentButtonStyle}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ===== About Page ===== -->
+                <StackPanel x:Name="PageAbout" Visibility="Collapsed">
+                    <TextBlock Text="About" FontSize="24" FontWeight="SemiBold" Foreground="#89B4FA" Margin="0,0,0,24"/>
+
+                    <!-- Developer Card -->
+                    <Border Background="#313244" CornerRadius="16" Padding="32" Margin="0,0,0,16">
+                        <StackPanel HorizontalAlignment="Center">
+
+                            <!-- Avatar / Terminal Icon -->
+                            <Border Background="#1E1E2E" CornerRadius="50" Width="100" Height="100"
+                                    HorizontalAlignment="Center" Margin="0,0,0,20">
+                                <FontIcon Glyph="&#xE9EF;" FontSize="48" Foreground="#89B4FA"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+
+                            <!-- Developer Name -->
+                            <TextBlock Text="RoOt㉿zErO" FontSize="26" FontWeight="Bold" Foreground="#CDD6F4"
+                                       HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                            <TextBlock Text="Developer &amp; Security Researcher" FontSize="13" Foreground="#A6ADC8"
+                                       HorizontalAlignment="Center" Margin="0,0,0,24"/>
+
+                            <Rectangle Height="1" Fill="#45475A" Margin="0,0,0,24"/>
+
+                            <!-- Terminal Signature -->
+                            <Border Background="#11111B" CornerRadius="10" Padding="20,16" Margin="0,0,0,24"
+                                    HorizontalAlignment="Center">
+                                <StackPanel>
+                                    <TextBlock Foreground="#A6E3A1" FontFamily="Consolas" FontSize="14">
+                                        <Run Text="┌──("/><Run Foreground="#89B4FA" Text="RoOt㉿zErO"/><Run Text=")-[~]"/>
+                                    </TextBlock>
+                                    <TextBlock Foreground="#A6E3A1" FontFamily="Consolas" FontSize="14" Margin="0,2,0,0">
+                                        <Run Text="└─$"/>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+
+                            <Rectangle Height="1" Fill="#45475A" Margin="0,0,0,24"/>
+
+                            <!-- Website -->
+                            <Border Background="#45475A" CornerRadius="10" Padding="16,14" Margin="0,0,0,12"
+                                    HorizontalAlignment="Stretch">
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon Grid.Column="0" Glyph="&#xE774;" FontSize="20" Foreground="#89B4FA"
+                                              VerticalAlignment="Center"/>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Website" FontSize="11" Foreground="#6C7086"/>
+                                        <TextBlock x:Name="AboutWebsite" Text="mrrezanemati.ir" FontSize="15"
+                                                   Foreground="#CDD6F4" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                    <HyperlinkButton Grid.Column="2" Content="Open" FontSize="12"
+                                                     NavigateUri="https://mrrezanemati.ir"
+                                                     Foreground="#89B4FA" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Telegram -->
+                            <Border Background="#45475A" CornerRadius="10" Padding="16,14" Margin="0,0,0,12"
+                                    HorizontalAlignment="Stretch">
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon Grid.Column="0" Glyph="&#xE8BD;" FontSize="20" Foreground="#F9E2AF"
+                                              VerticalAlignment="Center"/>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Telegram" FontSize="11" Foreground="#6C7086"/>
+                                        <TextBlock x:Name="AboutTelegram" Text="@webs7" FontSize="15"
+                                                   Foreground="#CDD6F4" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                    <HyperlinkButton Grid.Column="2" Content="Open" FontSize="12"
+                                                     NavigateUri="https://t.me/webs7"
+                                                     Foreground="#F9E2AF" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+
+                            <Rectangle Height="1" Fill="#45475A" Margin="0,16,0,16"/>
+
+                            <!-- App Info -->
+                            <TextBlock Text="DNS Manager Pro" FontSize="16" FontWeight="Bold" Foreground="#89B4FA"
+                                       HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                            <TextBlock Text="Version 1.0.0" FontSize="12" Foreground="#6C7086"
+                                       HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                            <TextBlock Text="Built with WinUI 3 &amp; .NET 8" FontSize="11" Foreground="#585B70"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                </Grid>
+            </ScrollViewer>
+
+            <!-- Status Bar -->
+            <Border Grid.Row="1" Background="#181825" Padding="16,8">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="StatusText" Text="Ready" Foreground="#6C7086" FontSize="12"
+                               VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
+                        <ProgressBar x:Name="LoadingBar" Width="120" Height="4" IsIndeterminate="True"
+                                     Visibility="Collapsed" VerticalAlignment="Center"
+                                     Foreground="#89B4FA" ShowError="False" ShowPaused="False"/>
+                        <TextBlock x:Name="AdapterCountText" Text="" Foreground="#6C7086" FontSize="12"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

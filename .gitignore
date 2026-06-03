@@ -1,0 +1,46 @@
+## Build results
+bin/
+obj/
+publish/
+
+## NuGet
+*.nupkg
+packages/
+.nuget/
+
+## Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Windows
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+## Rider / VS Code
+.idea/
+.vscode/
+
+## macOS
+.DS_Store
+
+## User-specific
+*.rsuser
+*.pidb
+*.booproj
+
+## Windows App SDK
+*.appx
+*.appxbundle
+*.appxrecipe
+*.appxsym
+*.msix
+*.msixbundle
+*.msixbundle
+
+## Others
+*.log
+*.tmp
