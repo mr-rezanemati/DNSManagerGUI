@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 🌐 DNS Manager Pro
 
 A modern, feature-rich DNS management application for Windows built with **WinUI 3** and **.NET 8**. Change DNS servers, manage profiles, benchmark DNS speed, and resolve domains — all from a sleek dark-themed interface.
@@ -257,7 +256,3 @@ SOFTWARE.
 **Built with ❤️ using WinUI 3 & .NET 8**
 
 </div>
-=======
-# DNSManagerGUI
-DNS Manager GUI
->>>>>>> 93349813c12cbc09753129ed1fe695bbdd29ead3
