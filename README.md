@@ -55,13 +55,8 @@ A modern, feature-rich DNS management application for Windows built with **WinUI
 
 > _Add your screenshots to the `Screenshots/` folder and update the paths below._
 
-| Dashboard | Set DNS | Benchmark |
-|-----------|---------|-----------|
-| ![Dashboard](Screenshots/dashboard.png) | ![Set DNS](Screenshots/setdns.png) | ![Benchmark](Screenshots/benchmark.png) |
+| ![Dashboard](Screenshots/dashboard.png)
 
-| Profiles | Resolver | About |
-|----------|----------|-------|
-| ![Profiles](Screenshots/profiles.png) | ![Resolver](Screenshots/resolver.png) | ![About](Screenshots/about.png) |
 
 ---
 
